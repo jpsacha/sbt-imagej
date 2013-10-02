@@ -2,7 +2,7 @@ sbtPlugin := true
 
 name := "sbt-imagej"
 
-organization := "ij-plugins.sf.net"
+organization := "net.sf.ij-plugins"
 
 version := "0.1.0-SNAPSHOT"
 
@@ -24,7 +24,7 @@ publishArtifact in (Test, packageDoc) := false
 
 publishArtifact in (Test, packageSrc) := false
 
-publishMavenStyle := false
+//publishMavenStyle := false
 
 publishTo <<= version {
   version: String =>
