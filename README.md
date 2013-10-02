@@ -1,8 +1,8 @@
 sbt-imagej
 ==========
 
-sbt-imagej is an SBT (Simple Build Tool) plugin that that helps with development of
-(ImageJ)[http://rsbweb.nih.gov/ij/] plugins (those are different than SBT plugins).
+sbt-imagej is an [SBT](http://www.scala-sbt.org/) (Simple Build Tool) plugin that that helps with development of
+[ImageJ](http://rsbweb.nih.gov/ij/) plugins (those are different than SBT plugins).
 
 The main task `imagej-run`, or `imagejRun`, does following:
 
@@ -83,7 +83,7 @@ If instead you want to export packaged jars, you need to use SBT option:
 exportsJars := true
 ```
 
-This is a standard (SBT option)[http://www.scala-sbt.org/0.13.0/docs/Howto/package.html].
+This is a standard [SBT option](http://www.scala-sbt.org/0.13.0/docs/Howto/package.html).
 You need to add `exportsJars := true` to every dependent projects in your build.
 (I know it looks tedious, if there is a better solution please let me know).
 
