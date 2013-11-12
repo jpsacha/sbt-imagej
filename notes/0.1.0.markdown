@@ -1,0 +1,4 @@
+Initial release, provides two SBT tasks:
+
+* `imagejRun` - build project, package plugins, and run ImageJ with those plugins added.
+* `imageJPrepareRun` - used by `imageJRun` - builds project and prepares plugin jars. 
