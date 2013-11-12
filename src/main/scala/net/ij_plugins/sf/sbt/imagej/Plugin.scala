@@ -65,7 +65,8 @@ object Plugin extends sbt.Plugin {
       imageJPluginsSubDir in Runtime,
       imageJExclusions in Runtime,
       packageBin in Compile,
-      fullClasspath in Runtime
+      fullClasspath in Runtime,
+      streams
       ) map prepareRunTask).dependsOn(packageBin in Compile),
 
     imageJRuntimeDir := "sandbox",
@@ -89,9 +90,10 @@ object Plugin extends sbt.Plugin {
                       runtimeDir: String,
                       classpath: Classpath,
                       taskStreams: TaskStreams) {
+    val logger = taskStreams.log
     val userDir = (base / runtimeDir).getCanonicalPath
-    //    println("Run ImageJ from: " + userDir)
-    scalaRun.run("ij.ImageJ", classpath.map(_.data), Seq("-ijpath", userDir), taskStreams.log)
+    logger.debug("Run ImageJ with -ijpath " + userDir)
+    scalaRun.run("ij.ImageJ", classpath.map(_.data), Seq("-ijpath", userDir), logger)
   }
 
   /**
@@ -102,16 +104,18 @@ object Plugin extends sbt.Plugin {
                              pluginsSubDir: String,
                              exclusions: Seq[String],
                              jar: java.io.File,
-                             dependencies: Seq[Attributed[File]]
+                             dependencies: Seq[Attributed[File]],
+                             taskStreams: TaskStreams
                               ): Seq[java.io.File] = {
-    println("Preparing ImageJ plugin directories")
-    val files = jar +: (for (f <- dependencies) yield f.data)
+    val logger = taskStreams.log
     val pluginsDir = base / runtimeDir / "plugins" / pluginsSubDir
+    logger.debug("Copying to ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
     pluginsDir.mkdirs()
+    val files = jar +: (for (f <- dependencies) yield f.data)
     for (f <- files
          if !f.isDirectory
          if exclusions.forall(!f.getName.matches(_))) {
-      //      println("Copying: " + f + " to " + (pluginsDir / f.getName).getCanonicalPath)
+      logger.debug("Copying: " + f + " to " + (pluginsDir / f.getName).getCanonicalPath)
       IO.copyFile(f, pluginsDir / f.getName)
     }
     files
