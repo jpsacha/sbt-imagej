@@ -19,6 +19,8 @@ libraryDependencies += "net.imagej" % "ij" % "1.47h"
 // Set the prompt (for this build) to include the project id.
 shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.project + "> " }
 
+fork := true
+
 //
 // sbt-imagej plugin settings
 //
