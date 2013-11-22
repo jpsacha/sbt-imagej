@@ -18,3 +18,4 @@ project/project
 # Scala-IDE specific
 .scala_dependencies
 
+sandbox
