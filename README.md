@@ -20,7 +20,7 @@ For sbt 0.12 and 0.13 add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 ```scala
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "0.1.0-SNAPSHOT")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.0.0")
 ```
 
 Usage
