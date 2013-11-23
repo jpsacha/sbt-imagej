@@ -4,7 +4,7 @@ name := "sbt-imagej"
 
 organization := "net.sf.ij-plugins"
 
-version := "0.1.0-SNAPSHOT"
+version := "1.0.0"
 
 description := "SBT plugin that helps create runtime directory structure for ImageJ plugin development."
 
@@ -22,7 +22,7 @@ publishArtifact in(Compile, packageBin) := true
 
 publishArtifact in(Test, packageBin) := false
 
-publishArtifact in(Compile, packageDoc) := false
+publishArtifact in(Compile, packageDoc) := true
 
 publishArtifact in(Compile, packageSrc) := true
 
@@ -37,7 +37,7 @@ publishTo <<= version {
     if (version.contains("-SNAPSHOT"))
       Some("Sonatype Nexus Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
     else
-      Some("Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases")
+      Some("Sonatype Nexus Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
 }
 
 pomExtra :=
