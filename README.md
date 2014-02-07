@@ -15,11 +15,9 @@ The main task `imagej-run`, or `imagejRun`, does following:
 Setup
 -----
 
-For sbt 0.12 and 0.13 add `sbt-imagej` as a dependency in `project/imagej.sbt`:
+Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 
 ```scala
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
 addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.0.0")
 ```
 
