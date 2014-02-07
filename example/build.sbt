@@ -31,3 +31,6 @@ imageJRuntimeDir := "sandbox"
 imageJPluginsSubDir := "ij-plugins"
 
 imageJExclusions += """nativelibs4java\S*"""
+
+// Delete created plugins directory when running `clean.
+cleanFiles += imageJPluginsDir.value

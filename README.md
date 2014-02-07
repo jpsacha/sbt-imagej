@@ -87,6 +87,37 @@ This is a standard [SBT option](http://www.scala-sbt.org/0.13.0/docs/Howto/packa
 You need to add `exportsJars := true` to every dependent projects in your build.
 (I know it looks tedious, if there is a better solution please let me know).
 
+Tips and Tricks
+---------------
+
+### Extend `clean` to remove content created by `imageJRun` or `imageJPrepareRun`
+
+You can make the regular `clean` command to remove extra content by adding directory to SBT setting `cleanFiles`
+
+```scala
+cleanFiles += imageJPluginsDir.value
+```
+
+### Copy additional files to plugins directory when `imageJPrepareRun` is executed
+
+Sometimes you want to copy some extra files to plugins directory.
+You can extend `imageJPrepareRun` to do the copy or any other tasks.
+
+```scala
+imageJPrepareRun := imageJPrepareRun.value ++ {
+  // Files you want to copy
+  val srcFiles = Seq(
+    new java.io.File("file1"),
+    new java.io.File("file2"),
+    )
+  val destDir = imageJPluginsDir.value
+  val destFiles = srcFiles.map(f => destDir / f.getName)
+  srcFiles zip destFiles.foreach{ case (src, dest) => IO.copyFile(src, dest) }
+  // The last statement here should return the collection of copied files
+  destFiles
+}
+```
+
 License
 -------
 
