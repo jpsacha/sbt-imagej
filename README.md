@@ -4,13 +4,13 @@ sbt-imagej
 sbt-imagej is an [SBT](http://www.scala-sbt.org/) (Simple Build Tool) plugin that that helps with development of
 [ImageJ](http://rsbweb.nih.gov/ij/) plugins (those are different than SBT plugins).
 
-The main task `ijRun`, or `ijRun`, does following:
+The main task `ijRun` does following:
 
 1. Builds your ImageJ plugin
 2. Creates directory structure expected by ImageJ
 3. Copies the plugin jar to ImageJ plugins directory, along with all dependencies
 4. Starts ImageJ instance that is aware of the new plugin location,
-   so you can interactively test your plugin.
+   so you can interactively test your plugin from within ImageJ.
 
 Setup
 -----
@@ -24,7 +24,7 @@ addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.1.0")
 Usage
 -----
 
-### Applying the Plugin to a Project (Adding the `ijRun` Task)
+### Using the Plugin to a Project
 
 First, make sure that you've added the plugin to your build, as described above.
 
@@ -47,16 +47,15 @@ There is also a task that only copies the jar and dependencies to to the plugins
 
     > ijPrepareRun
 
-You can customize directory used to run ImageJ and load plugins:
+It is useful if you want to have your own run configuration, for instance executed by your IDE.
+Look in the `example` directory to see how it can be used in IntelliJ IDEA or Eclipse.
+
+There are a couple of settings you can use to customize directory used to run ImageJ and load plugins:
 
 * `ijRuntimeSubDir` - Location of ImageJ runtime directory relative to base directory.
   Default value is `sandbox`.
 * `ijPluginsSubDir` - Subdirectory of the `plugins` directory, where all `jar`s will be copied.
   Default is `jars`.
-* `ijPluginsDir` - Full path to `plugins` subdirectory, where all `jar`s will be copied, intended
-  to be read-only. It can be used, for instance, in `cleanFiles += ijPluginsDir.value`. By default,
-  it is computed from `ijPluginsSubDir` and `ijRuntimeSubDir`.
-
 * `ijExclusions` - List of regex expressions that match JARs that will be excluded from the plugins directory.
   Default excludes ImageJ jar, source jars, and javadoc/scaladoc jars.
 
@@ -73,6 +72,11 @@ ijExclusions += """some\.jar"""
 The above configuration will copy your jar file and dependencies to
 `sandbox/plugins/my-plugin`, and additionally exclude the `some.jar`.
 ImageJ will be instructed to use `sandbox` as its home directory.
+
+You can use `ijPluginsDir` settings key to see full path to `plugins` subdirectory,
+where all jars will be copied. `ijPluginsDir` is intended to be read-only. It can be used,
+for instance, in `cleanFiles += ijPluginsDir.value`. By default, it is computed from
+`ijPluginsSubDir` and `ijRuntimeSubDir`. Typically you should not reassign it.
 
 ### Multi-Module Projects###
 
@@ -103,7 +107,7 @@ cleanFiles += ijPluginsDir.value
 ### Copy additional files to plugins directory when `ijPrepareRun` is executed
 
 Sometimes you want to copy some extra files to plugins directory.
-You can extend `ijPrepareRun` to do the copy or any other tasks.
+You can extend `ijPrepareRun` to do the copy or any other tasks:
 
 ```scala
 ijPrepareRun := ijPrepareRun.value ++ {

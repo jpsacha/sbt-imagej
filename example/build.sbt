@@ -20,7 +20,7 @@ shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.
 fork := true
 
 //
-// Inport and customize sbt-imagej plugin tasks
+// Import and customize sbt-imagej plugin tasks
 //
 ijSettings
 
@@ -30,5 +30,5 @@ ijPluginsSubDir := "ij-plugins"
 
 ijExclusions += """nativelibs4java\S*"""
 
-// Delete created plugins directory when running `clean`.
+// Instruct `clean` to delete created plugins subdirectory created by `ijRun`/`ijPrepareRun`.
 cleanFiles += ijPluginsDir.value
