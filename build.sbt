@@ -6,7 +6,7 @@ name := "sbt-imagej"
 
 organization := "net.sf.ij-plugins"
 
-version := "1.1.0-SNAPSHOT"
+version := "1.1.0"
 
 description := "SBT plugin that helps create runtime directory structure for ImageJ plugin development."
 
