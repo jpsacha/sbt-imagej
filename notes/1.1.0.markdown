@@ -1,0 +1,5 @@
+* Simplified task names to use consistent capitalization and start by "ij", for instance "ijRun".
+* Added new settings task `ijPluginsDir` that gives fill path to created directory. It can be used,
+  for instance, in to add directories to be cleaned by `clean` task:
+  `cleanFiles += ijPluginsDir.value`
+* Dropped support for SBT 0.12, released only for SBT 0.13.

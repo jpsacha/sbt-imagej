@@ -1,10 +1,12 @@
+import SonatypeKeys._
+
 sbtPlugin := true
 
 name := "sbt-imagej"
 
 organization := "net.sf.ij-plugins"
 
-version := "1.0.0"
+version := "1.1.0-SNAPSHOT"
 
 description := "SBT plugin that helps create runtime directory structure for ImageJ plugin development."
 
@@ -18,19 +20,11 @@ licenses := Seq("GPLv3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 
-publishArtifact in(Compile, packageBin) := true
-
 publishArtifact in(Test, packageBin) := false
-
-publishArtifact in(Compile, packageDoc) := true
-
-publishArtifact in(Compile, packageSrc) := true
 
 publishArtifact in(Test, packageDoc) := false
 
 publishArtifact in(Test, packageSrc) := false
-
-//publishMavenStyle := false
 
 publishTo <<= version {
   version: String =>
@@ -41,14 +35,21 @@ publishTo <<= version {
 }
 
 pomExtra :=
+  <url>https://github.com/jpsacha/sbt-imagej</url>
+  <licenses>
+    <license>
+      <name>GPL v.3</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+    </license>
+  </licenses>
   <scm>
     <url>git@github.com:jpsacha/sbt-imagej.git</url>
     <connection>scm:git@github.com:jpsacha/sbt-imagej.git</connection>
   </scm>
-    <developers>
-      <developer>
-        <id>jpsacha</id>
-        <name>Jarek Sacha</name>
-        <url>https://github.com/jpsacha</url>
-      </developer>
-    </developers>
+  <developers>
+    <developer>
+      <id>jpsacha</id>
+      <name>Jarek Sacha</name>
+      <url>https://github.com/jpsacha</url>
+    </developer>
+  </developers>
