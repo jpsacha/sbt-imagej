@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Jarek Sacha
+ * Copyright (C) 2013-2014 Jarek Sacha
  * email: jpsacha at gmail dot com
  *
  * This file is part of sbt-imagej.
@@ -30,50 +30,56 @@ object Plugin extends sbt.Plugin {
 
   object ImageJKeys {
     /** Main tasks for setting up ImageJ runtime directory. */
-    lazy val imageJRun = TaskKey[Unit]("imagej-run",
+    lazy val ijRun = TaskKey[Unit]("ijRun",
       "Prepare plugins directory and run ImageJ") //
 
-    lazy val imageJPrepareRun = TaskKey[Seq[File]]("imagej-prepare-run",
+    lazy val ijPrepareRun = TaskKey[Seq[File]]("ijPrepareRun",
       "Prepare plugins directory to run with ImageJ")
 
-    lazy val imageJProjectDependencyJars = TaskKey[Seq[File]]("imagej-project-dependency-jars",
+    lazy val ijProjectDependencyJars = TaskKey[Seq[File]]("ijProjectDependencyJars",
       "Prepare plugins directory to run with ImageJ")
 
-    lazy val imageJRuntimeDir = SettingKey[String]("imagej-runtime-dir",
+    lazy val ijRuntimeSubDir = SettingKey[String]("ijRuntimeSubDir",
       "Location of ImageJ runtime directory relative to base directory.")
 
-    lazy val imageJPluginsSubDir = SettingKey[String]("imagej-plugins-subdir",
-      "Subdirectory of the `plugins` directory, where all `jar`s will be copied.")
+    lazy val ijPluginsSubDir = SettingKey[String]("ijPluginsSubDir",
+      "Subdirectory of the `plugins` directory, where all `jar`s will be copied, relative to `plugins` directory.")
 
-    lazy val imageJExclusions = SettingKey[Seq[String]]("imagej-exclusions",
+    lazy val ijPluginsDir = SettingKey[File]("ijPluginsDir",
+      "Full path to `plugins` subdirectory, where all `jar`s will be copied. " +
+        "By default, it is computed from `ijPluginsSubDir` and `ijRuntimeSubDir`.")
+
+    lazy val ijExclusions = SettingKey[Seq[String]]("ijExclusions",
       "List of regex expressions that match JARs that will be excluded from the plugins directory.")
   }
 
-  lazy val imageJSettings: Seq[Project.Setting[_]] = Seq(
+  lazy val ijSettings: Seq[Def.Setting[_]] = Seq(
 
-    imageJRun <<= ((
+    ijRun <<= ((
       runner in run,
       baseDirectory in Runtime,
-      imageJRuntimeDir,
+      ijRuntimeSubDir,
       fullClasspath in Runtime,
       streams
-      ) map runTask).dependsOn(imageJPrepareRun),
+      ) map runTask).dependsOn(ijPrepareRun),
 
-    imageJPrepareRun <<= ((
+    ijPrepareRun <<= ((
       baseDirectory in Runtime,
-      imageJRuntimeDir,
-      imageJPluginsSubDir in Runtime,
-      imageJExclusions in Runtime,
+      ijRuntimeSubDir,
+      ijPluginsSubDir in Runtime,
+      ijExclusions in Runtime,
       packageBin in Compile,
       fullClasspath in Runtime,
       streams
       ) map prepareRunTask).dependsOn(packageBin in Compile),
 
-    imageJRuntimeDir := "sandbox",
+    ijRuntimeSubDir := "sandbox",
 
-    imageJPluginsSubDir := "jars",
+    ijPluginsSubDir := "jars",
 
-    imageJExclusions := Seq(
+    ijPluginsDir := (baseDirectory in Runtime).value / ijRuntimeSubDir.value / "plugins" /  ijPluginsSubDir.value,
+
+    ijExclusions := Seq(
       // ImageJ binaries
       """ij-\d.\d\d[a-z]\.jar""", """ij\.jar""",
       // Source archives
@@ -85,6 +91,9 @@ object Plugin extends sbt.Plugin {
     )
   )
 
+  /**
+   * Run ImageJ; pointing it to created plugins.
+   */
   private def runTask(scalaRun: ScalaRun,
                       base: java.io.File,
                       runtimeDir: String,

@@ -4,7 +4,7 @@ sbt-imagej
 sbt-imagej is an [SBT](http://www.scala-sbt.org/) (Simple Build Tool) plugin that that helps with development of
 [ImageJ](http://rsbweb.nih.gov/ij/) plugins (those are different than SBT plugins).
 
-The main task `imagej-run`, or `imagejRun`, does following:
+The main task `ijRun`, or `ijRun`, does following:
 
 1. Builds your ImageJ plugin
 2. Creates directory structure expected by ImageJ
@@ -18,13 +18,13 @@ Setup
 Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 
 ```scala
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.0.0")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.1.0")
 ```
 
 Usage
 -----
 
-### Applying the Plugin to a Project (Adding the `imagej-run` Task)
+### Applying the Plugin to a Project (Adding the `ijRun` Task)
 
 First, make sure that you've added the plugin to your build, as described above.
 
@@ -34,36 +34,40 @@ If you're using `build.sbt` add this:
 ```scala
 import ImageJKeys._ // put this at the top of the file
 
-imageJSettings
+ijSettings
 ```
 
-Now you'll have a new `imagej-run` task which will compile your project,
+Now you'll have a new `ijRun` task which will compile your project,
 pack your class files and resources in a jar, copy that jar and dependencies to local
 ImageJ's plugins directory, and run ImageJ
 
-    > imagej-run
+    > ijRun
 
 There is also a task that only copies the jar and dependencies to to the plugins directory
 
-    > imagej-prepare-run
+    > ijPrepareRun
 
 You can customize directory used to run ImageJ and load plugins:
 
-* `imageJRuntimeDir` - Location of ImageJ runtime directory relative to base directory.
-  Default value is `sandbox`
-* `imageJPluginsSubDir` - Subdirectory of the `plugins` directory, where all `jar`s will be copied.
-  Default is `jars`
-* `imageJExclusions` - List of regex expressions that match JARs that will be excluded from the plugins directory.
+* `ijRuntimeSubDir` - Location of ImageJ runtime directory relative to base directory.
+  Default value is `sandbox`.
+* `ijPluginsSubDir` - Subdirectory of the `plugins` directory, where all `jar`s will be copied.
+  Default is `jars`.
+* `ijPluginsDir` - Full path to `plugins` subdirectory, where all `jar`s will be copied, intended
+  to be read-only. It can be used, for instance, in `cleanFiles += ijPluginsDir.value`. By default,
+  it is computed from `ijPluginsSubDir` and `ijRuntimeSubDir`.
+
+* `ijExclusions` - List of regex expressions that match JARs that will be excluded from the plugins directory.
   Default excludes ImageJ jar, source jars, and javadoc/scaladoc jars.
 
 For example the name of the jar can be set as follows in build.sbt:
 
 ```scala
-imageJRuntimeDir := "sandbox"
+ijRuntimeSubDir := "sandbox"
 
-imageJPluginsSubDir := "my-plugin"
+ijPluginsSubDir := "my-plugin"
 
-imageJExclusions += """some\.jar"""
+ijExclusions += """some\.jar"""
 ```
 
 The above configuration will copy your jar file and dependencies to
@@ -88,27 +92,27 @@ You need to add `exportsJars := true` to every dependent projects in your build.
 Tips and Tricks
 ---------------
 
-### Extend `clean` to remove content created by `imageJRun` or `imageJPrepareRun`
+### Extend `clean` to remove content created by `ijRun` or `ijPrepareRun`
 
 You can make the regular `clean` command to remove extra content by adding directory to SBT setting `cleanFiles`
 
 ```scala
-cleanFiles += imageJPluginsDir.value
+cleanFiles += ijPluginsDir.value
 ```
 
-### Copy additional files to plugins directory when `imageJPrepareRun` is executed
+### Copy additional files to plugins directory when `ijPrepareRun` is executed
 
 Sometimes you want to copy some extra files to plugins directory.
-You can extend `imageJPrepareRun` to do the copy or any other tasks.
+You can extend `ijPrepareRun` to do the copy or any other tasks.
 
 ```scala
-imageJPrepareRun := imageJPrepareRun.value ++ {
+ijPrepareRun := ijPrepareRun.value ++ {
   // Files you want to copy
   val srcFiles = Seq(
     new java.io.File("file1"),
     new java.io.File("file2"),
     )
-  val destDir = imageJPluginsDir.value
+  val destDir = ijPluginsDir.value
   val destFiles = srcFiles.map(f => destDir / f.getName)
   srcFiles zip destFiles.foreach{ case (src, dest) => IO.copyFile(src, dest) }
   // The last statement here should return the collection of copied files
