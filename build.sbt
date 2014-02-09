@@ -1,12 +1,15 @@
 import SonatypeKeys._
 
+// Import default Sonatype publish settings.
+sonatypeSettings
+
 sbtPlugin := true
 
 name := "sbt-imagej"
 
 organization := "net.sf.ij-plugins"
 
-version := "1.1.0-SNAPSHOT"
+version := "1.1.0"
 
 description := "SBT plugin that helps create runtime directory structure for ImageJ plugin development."
 
@@ -35,13 +38,6 @@ publishTo <<= version {
 }
 
 pomExtra :=
-  <url>https://github.com/jpsacha/sbt-imagej</url>
-  <licenses>
-    <license>
-      <name>GPL v.3</name>
-      <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
-    </license>
-  </licenses>
   <scm>
     <url>git@github.com:jpsacha/sbt-imagej.git</url>
     <connection>scm:git@github.com:jpsacha/sbt-imagej.git</connection>
