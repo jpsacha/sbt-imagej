@@ -18,11 +18,13 @@ Setup
 Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 
 ```scala
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.1.0")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.0-SNAPSHOT")
 ```
 
 Usage
 -----
+
+`sbt-imagej` requires SBT 0.13.
 
 ### Using the Plugin to a Project
 
@@ -32,9 +34,7 @@ First, make sure that you've added the plugin to your build, as described above.
 If you're using `build.sbt` add this:
 
 ```scala
-import ImageJKeys._ // put this at the top of the file
-
-ijSettings
+enablePlugins(SbtImageJ)
 ```
 
 Now you'll have a new `ijRun` task which will compile your project,
@@ -93,6 +93,12 @@ This is a standard [SBT option](http://www.scala-sbt.org/0.13.0/docs/Howto/packa
 You need to add `exportsJars := true` to every dependent projects in your build.
 (I know it looks tedious, if there is a better solution please let me know).
 
+Example Project
+---------------
+
+You can find example project in sub-directory [example].
+It contains SBT setup, two ImageJ plugins, and a workaround to run SBT tasks from IDEA and Eclipse.
+
 Tips and Tricks
 ---------------
 
@@ -124,9 +130,40 @@ ijPrepareRun := ijPrepareRun.value ++ {
 }
 ```
 
+### Running SBT tasks at part of IDEA or Eclipse build ###
+[IntelliJ IDEA](https://www.jetbrains.com/idea/) has great [support](http://blog.jetbrains.com/scala/) for developing Scala code.
+One missing feature is ability to execute tasks as part of IDEA build.
+Though there is an easy workaround.
+IDEA can execute Ant tasks as part of the build, so simply add an Ant task that runs SBT task,
+in particular an `sbt-imagej` task. Use useful task to execute before a run in IDEA is ``.
+Here is an example Ant task that does it:
+
+```xml
+<target name="sbt-imagej-prepare-run"
+        description="Run SBT task 'prepareRun' that prepares ImageJ plugins directory">
+    <property environment="env"/>
+    <fail unless="env.SBT_HOME"
+          message="SBT_HOME system variable must be defined and point to directory containing 'sbt-launch.jar'"/>
+    <property name="sbt-launch.jar" location="${env.SBT_HOME}/bin/sbt-launch.jar"/>
+
+    <java dir="${basedir}"
+          jar="${sbt-launch.jar}"
+          fork="true"
+          failonerror="true">
+        <jvmarg line="-Dfile.encoding=UTF8 -Xmx1G -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m
+                      -Djava.net.useSystemProxies=true"/>
+        <arg line="ijPrepareRun"/>
+    </java>
+</target>
+```
+
+You can find complete [build.xml](example/build.xml) in the [example] project.
+Similar approach also works in Eclipse.
+
+
 License
 -------
 
-Copyright (c) 2013 Jarek Sacha
+Copyright (c) 2013-2014 Jarek Sacha
 
 Published under GPLv3, see LICENSE file.

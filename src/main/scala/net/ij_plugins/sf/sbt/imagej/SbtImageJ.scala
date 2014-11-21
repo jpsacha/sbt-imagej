@@ -20,18 +20,16 @@
 
 package net.ij_plugins.sf.sbt.imagej
 
-import sbt._
 import sbt.Keys._
+import sbt._
 
 /** SBT plugin that helps create runtime directory structure for ImageJ plugin development. */
-object Plugin extends sbt.Plugin {
+object SbtImageJ extends sbt.AutoPlugin {
 
-  import ImageJKeys._
-
-  object ImageJKeys {
+  object autoImport {
     /** Main tasks for setting up ImageJ runtime directory. */
     lazy val ijRun = TaskKey[Unit]("ijRun",
-      "Prepare plugins directory and run ImageJ") //
+      "Prepare plugins directory and run ImageJ")
 
     lazy val ijPrepareRun = TaskKey[Seq[File]]("ijPrepareRun",
       "Prepare plugins directory to run with ImageJ")
@@ -53,8 +51,10 @@ object Plugin extends sbt.Plugin {
       "List of regex expressions that match JARs that will be excluded from the plugins directory.")
   }
 
-  lazy val ijSettings: Seq[Def.Setting[_]] = Seq(
 
+  import net.ij_plugins.sf.sbt.imagej.SbtImageJ.autoImport._
+
+  override def projectSettings: Seq[Def.Setting[_]] = Seq(
     ijRun <<= ((
       runner in run,
       baseDirectory in Runtime,
@@ -77,7 +77,7 @@ object Plugin extends sbt.Plugin {
 
     ijPluginsSubDir := "jars",
 
-    ijPluginsDir := (baseDirectory in Runtime).value / ijRuntimeSubDir.value / "plugins" /  ijPluginsSubDir.value,
+    ijPluginsDir := (baseDirectory in Runtime).value / ijRuntimeSubDir.value / "plugins" / ijPluginsSubDir.value,
 
     ijExclusions := Seq(
       // ImageJ binaries
