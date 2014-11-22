@@ -34,6 +34,10 @@ object SbtImageJ extends sbt.AutoPlugin {
     lazy val ijPrepareRun = TaskKey[Seq[File]]("ijPrepareRun",
       "Prepare plugins directory to run with ImageJ")
 
+    lazy val ijCleanBeforePrepareRun = SettingKey[Boolean]("ijCleanBeforeRun",
+      "If `true` the plugins directory will be cleaned (deleted) before it is populated by `ijPrepareRun` task. " +
+        "This is useful if jar names change during build, for instance, due to versioning.")
+
     lazy val ijProjectDependencyJars = TaskKey[Seq[File]]("ijProjectDependencyJars",
       "Prepare plugins directory to run with ImageJ")
 
@@ -65,6 +69,7 @@ object SbtImageJ extends sbt.AutoPlugin {
 
     ijPrepareRun <<= ((
       baseDirectory in Runtime,
+      ijCleanBeforePrepareRun,
       ijRuntimeSubDir,
       ijPluginsSubDir in Runtime,
       ijExclusions in Runtime,
@@ -72,6 +77,8 @@ object SbtImageJ extends sbt.AutoPlugin {
       fullClasspath in Runtime,
       streams
       ) map prepareRunTask).dependsOn(packageBin in Compile),
+
+    ijCleanBeforePrepareRun := false,
 
     ijRuntimeSubDir := "sandbox",
 
@@ -109,6 +116,7 @@ object SbtImageJ extends sbt.AutoPlugin {
    * Copy dependencies to ImageJ plugins directory
    */
   private def prepareRunTask(base: java.io.File,
+                             cleanBeforeRun: Boolean,
                              runtimeDir: String,
                              pluginsSubDir: String,
                              exclusions: Seq[String],
@@ -118,8 +126,13 @@ object SbtImageJ extends sbt.AutoPlugin {
                               ): Seq[java.io.File] = {
     val logger = taskStreams.log
     val pluginsDir = base / runtimeDir / "plugins" / pluginsSubDir
-    logger.debug("Copying to ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
+    logger.debug("Preparing ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
+    if(pluginsDir.exists && cleanBeforeRun ) {
+      logger.debug("Cleaning (deleting) ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
+      IO.delete(pluginsDir)
+    }
     pluginsDir.mkdirs()
+    logger.debug("Copying to ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
     val files = jar +: (for (f <- dependencies) yield f.data)
     for (f <- files
          if !f.isDirectory
