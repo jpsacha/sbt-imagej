@@ -138,12 +138,11 @@ ijPrepareRun := ijPrepareRun.value ++ {
 
 ### Running SBT tasks at part of IDEA or Eclipse build ###
 
-[IntelliJ IDEA](https://www.jetbrains.com/idea/) has great [support](http://blog.jetbrains.com/scala/) for developing Scala code.
-One missing feature is ability to execute tasks as part of IDEA build.
-Though there is an easy workaround.
-IDEA can execute Ant tasks as part of the build, so simply add an Ant task that runs SBT task,
-in particular an `sbt-imagej` task. Use useful task to execute before a run in IDEA is ``.
-Here is an example Ant task that does it:
+[IntelliJ IDEA](https://www.jetbrains.com/idea/) can load SBT projects using its Scala plugin.
+To execute SBT tasks before run/debug you will additionally need SBT plugin.
+You can setup your run configuration as described in [example/README.md].
+
+Eclipse does noy currently support SBT tasks, but you can execute them indirectly be calling them from Ant.
 
 ```xml
 <target name="sbt-imagej-prepare-run"
@@ -165,7 +164,6 @@ Here is an example Ant task that does it:
 ```
 
 You can find complete [build.xml](example/build.xml) in the [example] project.
-Similar approach also works in Eclipse.
 
 
 License
