@@ -140,7 +140,7 @@ ijPrepareRun := ijPrepareRun.value ++ {
 
 [IntelliJ IDEA](https://www.jetbrains.com/idea/) can load SBT projects using its Scala plugin.
 To execute SBT tasks before run/debug you will additionally need SBT plugin.
-You can setup your run configuration as described in [example/README.md].
+You can setup your run configuration as described in [example/README.md](example).
 
 Eclipse does noy currently support SBT tasks, but you can execute them indirectly be calling them from Ant.
 
@@ -163,7 +163,7 @@ Eclipse does noy currently support SBT tasks, but you can execute them indirectl
 </target>
 ```
 
-You can find complete [build.xml](example/build.xml) in the [example] project.
+You can find complete [build.xml](example/build.xml) in the [example](example) project.
 
 
 License
