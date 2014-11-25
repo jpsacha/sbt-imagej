@@ -28,9 +28,31 @@
     <!-- This Ant scripts is only used to simplify integration of SBT into IDEs that do not yetproperly support it. -->
     <!-- You need to define system variable SBT_HOME that points to directory containing 'sbt-launch.jar            -->
 
+    <target name="init">
+        <property environment="env"/>
+        <fail unless="env.SBT_HOME"
+              message="SBT_HOME system variable must be defined and point to directory containing 'sbt-launch.jar'"/>
+        <property name="sbt-launch.jar" location="${env.SBT_HOME}/bin/sbt-launch.jar"/>        
+    </target>
+
+    <!-- Use SBT to build plugin JAR archives and pepare ImageJ plugin directories  -->
+    <target name="sbt-imagej-run"
+            description="Run SBT task 'ijRun' that prepares ImageJ plugins directory and starts ImageJ"
+            depends="init">
+
+        <java dir="${basedir}"
+              jar="${sbt-launch.jar}"
+              fork="true"
+              failonerror="true">
+            <jvmarg line="-Dfile.encoding=UTF8 -Xmx1G -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m 
+                          -Djava.net.useSystemProxies=true"/>
+            <arg line="ijRun"/>
+        </java>
+    </target>
+
     <!-- Use SBT to build plugin JAR archives and pepare ImageJ plugin directories  -->
     <target name="sbt-imagej-prepare-run"
-            description="Run SBT task 'prepareRun' that prepares ImageJ plugins directory">
+            description="Run SBT task 'ijPrepareRun' that prepares ImageJ plugins directory">
         <property environment="env"/>
         <fail unless="env.SBT_HOME"
               message="SBT_HOME system variable must be defined and point to directory containing 'sbt-launch.jar'"/>

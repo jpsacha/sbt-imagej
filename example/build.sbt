@@ -1,34 +1,18 @@
-// sbt-imagej configuration keys
-import ImageJKeys._
-
 name := "sbt-imagej-example"
-
 organization := "ij-plugins.sf.net"
+version := "2.0.0-SNAPSHOT"
 
-version := "1.1.0"
+scalaVersion := "2.11.4"
 
-scalaVersion := "2.10.3"
-
-// Point to location of a snapshot repository for ImageJ
-resolvers += "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
-
-libraryDependencies += "net.imagej" % "ij" % "1.47v"
-
-// Set the prompt (for this build) to include the project id.
-shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.project + "> " }
+libraryDependencies += "net.imagej" % "ij" % "1.49k"
 
 fork := true
 
-//
-// Import and customize sbt-imagej plugin tasks
-//
-ijSettings
-
+// Enable and customize `sbt-imagej` plugin
+enablePlugins(SbtImageJ)
 ijRuntimeSubDir := "sandbox"
-
 ijPluginsSubDir := "ij-plugins"
-
+ijCleanBeforePrepareRun := true
 ijExclusions += """nativelibs4java\S*"""
-
 // Instruct `clean` to delete created plugins subdirectory created by `ijRun`/`ijPrepareRun`.
 cleanFiles += ijPluginsDir.value

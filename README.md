@@ -3,38 +3,34 @@ sbt-imagej
 
 sbt-imagej is an [SBT](http://www.scala-sbt.org/) (Simple Build Tool) plugin that that helps with development of
 [ImageJ](http://rsbweb.nih.gov/ij/) plugins (those are different than SBT plugins).
+It works for Scala as well as Java, or mix of both.
 
-The main task `ijRun` does following:
+The main task is `ijRun` it packages the ImageJ plugin and helps test the plugin from within ImageJ:
 
-1. Builds your ImageJ plugin
-2. Creates directory structure expected by ImageJ
-3. Copies the plugin jar to ImageJ plugins directory, along with all dependencies
+1. Builds your ImageJ plugin and packages it as jar.
+2. Creates directory structure expected by ImageJ runtime.
+3. Copies the plugin jar to ImageJ plugins directory, along with all dependencies.
 4. Starts ImageJ instance that is aware of the new plugin location,
    so you can interactively test your plugin from within ImageJ.
 
-Setup
+The other task `ijPrepareRun` is intended for integration with IDEs, like IntelliJ IDEA and Eclipse.
+
+`sbt-imagej` requires SBT 0.13.
+
+Usage
 -----
 
 Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 
 ```scala
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "1.1.0")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.0-SNAPSHOT")
 ```
 
-Usage
------
-
-### Using the Plugin to a Project
-
-First, make sure that you've added the plugin to your build, as described above.
-
-
-If you're using `build.sbt` add this:
+To use `sbt-imagej` you need to enable it in your project configuration,
+if you're using `build.sbt` add this:
 
 ```scala
-import ImageJKeys._ // put this at the top of the file
-
-ijSettings
+enablePlugins(SbtImageJ)
 ```
 
 Now you'll have a new `ijRun` task which will compile your project,
@@ -50,7 +46,9 @@ There is also a task that only copies the jar and dependencies to to the plugins
 It is useful if you want to have your own run configuration, for instance executed by your IDE.
 Look in the `example` directory to see how it can be used in IntelliJ IDEA or Eclipse.
 
-There are a couple of settings you can use to customize directory used to run ImageJ and load plugins:
+### Configuration
+
+There are a couple of settings you can use to customize `sbt-imagej` plugins:
 
 * `ijRuntimeSubDir` - Location of ImageJ runtime directory relative to base directory.
   Default value is `sandbox`.
@@ -58,8 +56,12 @@ There are a couple of settings you can use to customize directory used to run Im
   Default is `jars`.
 * `ijExclusions` - List of regex expressions that match JARs that will be excluded from the plugins directory.
   Default excludes ImageJ jar, source jars, and javadoc/scaladoc jars.
+* `ijCleanBeforePrepareRun` -  If `true` the plugins directory will be cleaned (deleted) before it
+  is populated by `ijPrepareRun` task. This is useful if jar names change during build,
+  for instance, due to versioning. If old jars with different names will not be removed ImageJ will
+  complain about duplicate plugins. Default value is `false` (for safety).
 
-For example the name of the jar can be set as follows in build.sbt:
+Consider example settings:
 
 ```scala
 ijRuntimeSubDir := "sandbox"
@@ -69,14 +71,16 @@ ijPluginsSubDir := "my-plugin"
 ijExclusions += """some\.jar"""
 ```
 
-The above configuration will copy your jar file and dependencies to
-`sandbox/plugins/my-plugin`, and additionally exclude the `some.jar`.
-ImageJ will be instructed to use `sandbox` as its home directory.
+This will set ImageJ runtime directory to `sandbox` and directory where your plugins will be
+copied to `sandbox/plugins/my-plugin`. Additionally exclude the `some.jar` from being
+copied to that directory. Note that for exclusions we used `+=` rather than `:=` this mean that
+we want to add one more exclusion to existing default exclusions, Using `:=` would disable default
+exclusions.
 
 You can use `ijPluginsDir` settings key to see full path to `plugins` subdirectory,
 where all jars will be copied. `ijPluginsDir` is intended to be read-only. It can be used,
 for instance, in `cleanFiles += ijPluginsDir.value`. By default, it is computed from
-`ijPluginsSubDir` and `ijRuntimeSubDir`. Typically you should not reassign it.
+`ijPluginsSubDir` and `ijRuntimeSubDir`. You should not reassign it.
 
 ### Multi-Module Projects###
 
@@ -92,6 +96,14 @@ exportsJars := true
 This is a standard [SBT option](http://www.scala-sbt.org/0.13.0/docs/Howto/package.html).
 You need to add `exportsJars := true` to every dependent projects in your build.
 (I know it looks tedious, if there is a better solution please let me know).
+
+
+Example Project
+---------------
+
+You can find example project in sub-directory [example].
+It contains SBT setup, two ImageJ plugins, and a workaround to run SBT tasks from IDEA and Eclipse.
+
 
 Tips and Tricks
 ---------------
@@ -124,9 +136,41 @@ ijPrepareRun := ijPrepareRun.value ++ {
 }
 ```
 
+### Running SBT tasks at part of IDEA or Eclipse build ###
+
+[IntelliJ IDEA](https://www.jetbrains.com/idea/) has great [support](http://blog.jetbrains.com/scala/) for developing Scala code.
+One missing feature is ability to execute tasks as part of IDEA build.
+Though there is an easy workaround.
+IDEA can execute Ant tasks as part of the build, so simply add an Ant task that runs SBT task,
+in particular an `sbt-imagej` task. Use useful task to execute before a run in IDEA is ``.
+Here is an example Ant task that does it:
+
+```xml
+<target name="sbt-imagej-prepare-run"
+        description="Run SBT task 'prepareRun' that prepares ImageJ plugins directory">
+    <property environment="env"/>
+    <fail unless="env.SBT_HOME"
+          message="SBT_HOME system variable must be defined and point to directory containing 'sbt-launch.jar'"/>
+    <property name="sbt-launch.jar" location="${env.SBT_HOME}/bin/sbt-launch.jar"/>
+
+    <java dir="${basedir}"
+          jar="${sbt-launch.jar}"
+          fork="true"
+          failonerror="true">
+        <jvmarg line="-Dfile.encoding=UTF8 -Xmx1G -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m
+                      -Djava.net.useSystemProxies=true"/>
+        <arg line="ijPrepareRun"/>
+    </java>
+</target>
+```
+
+You can find complete [build.xml](example/build.xml) in the [example] project.
+Similar approach also works in Eclipse.
+
+
 License
 -------
 
-Copyright (c) 2013 Jarek Sacha
+Copyright (c) 2013-2014 Jarek Sacha
 
 Published under GPLv3, see LICENSE file.
