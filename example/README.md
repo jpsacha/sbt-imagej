@@ -16,7 +16,7 @@ The SBT build is defined by three files
   is `sbt-imagej`
 
 Source files contain implementation of two ImageJ plugins: `Sepia Tone` and `Vignette`. 
-To illustrate that the `sbt-imagej` can be used for Scala and Java development, the first one is
+To illustrate that the `sbt-imagej` can be used for different languages, the first one is
 implemented in Scala, the second in Java.
 
 * `example/src/main/scala/effects/SepiaTonePlugIn.scala` - a plugin adding a sepia tone
@@ -34,7 +34,7 @@ Running
 -------
 
 The simplest way to build and run the example is to use SBT. It also can be used from IntelliJ
-IDEA or Eclipse. In all cases it assumes that you have [SBT](http://www.scala-sbt.org/) installed
+IDEA, Eclipse, and NetBeans. In all cases it assumes that you have [SBT](http://www.scala-sbt.org/) installed
 on your system.
 
 ### Using SBT ###
@@ -45,24 +45,20 @@ on your system.
 
 ### Using IntelliJ IDEA ###
 
-We assume here that you have [IntelliJ IDEA](http://www.jetbrains.com/idea/) 13 installed together
-with the [Scala plugin](http://confluence.jetbrains.com/display/SCA/Scala+Plugin+Nightly+Builds+for+Cardea).
-Before proceeding make sure that you can build and run the project using SBT, as described above.
+We assume here that you have [IntelliJ IDEA](http://www.jetbrains.com/idea/) 14 installed together
+with the Scala and SBT plugins. Scala plugin supports loading SBT projects into IDEA.
+The SBT plugin adds ability to execute SBT tasks before run/debug.
 
- 1. If you do not have it, define environment variable `SBT_HOME` pointing to location of SBT
-    installation.
  1. Start IDEA
  1. Select "Import Project" and load the `example/build.sbt`. This will let you edit and build
     the project.
  1. To run ImageJ with the custom plugin you need to invoke `ijPrepareRun` tasks before running ImageJ.
-    Currently (Feb 8, 2014) IDEA does not support using SBT tasks yet, so we will do it indirectly,
-    through Ant. Click on "Ant Build" tab and add `example/build.xml`
  1. Click `Run` > `Edit Configurations`
  1. Add new application configuration, call it for instance, `ImageJ`
  1. Set main class to `ij.ImageJ`
  1. Set "Working directory" to `example/sandbox`
- 1. Click on "+" under "Before lunch", select "Run Ant target", select `sbt-imagej-prepare-run`
- 1. Now you can run the new configuration. It will build the project, call Ant, Ant will call SBT
+ 1. Click on "+" under "Before lunch", select "SBT", in the combo box type `ijPrepareRun`, hit Enter (it is important), then click on OK.
+ 1. Now you can run the new configuration. It will build the project, call SBT
  to package and copy JARs, then run ImageJ with new plugins installed.
 
 
