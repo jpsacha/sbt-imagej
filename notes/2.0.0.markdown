@@ -1,1 +1,3 @@
-* Simplified use by migrating to autoPlugins
+* Simplified use of `sbt-imagej` plugin by migrating to autoPlugin setup.
+* Added flag to clean plugins directory before run.
+* New post on https://codingonthestaircase.wordpress.com/ describes plugin use.
