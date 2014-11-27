@@ -14,8 +14,9 @@ The main task is `ijRun` it packages the ImageJ plugin and helps test the plugin
    so you can interactively test your plugin from within ImageJ.
 
 The other task `ijPrepareRun` is intended for integration with IDEs, like IntelliJ IDEA and Eclipse.
+See also blog post [Developing ImageJ plugins with SBT using sbt-imagej](https://codingonthestaircase.wordpress.com/2014/11/23/developing-imagej-plugins-with-sbt-using-sbt-imagej/).
 
-`sbt-imagej` requires SBT 0.13.
+`sbt-imagej` requires SBT 0.13.5 or newer.
 
 Usage
 -----
