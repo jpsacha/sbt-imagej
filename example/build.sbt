@@ -2,9 +2,9 @@ name := "sbt-imagej-example"
 organization := "ij-plugins.sf.net"
 version := "2.0.1-SNAPSHOT"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.7"
 
-libraryDependencies += "net.imagej" % "ij" % "1.49k"
+libraryDependencies += "net.imagej" % "ij" % "1.49v"
 
 fork := true
 

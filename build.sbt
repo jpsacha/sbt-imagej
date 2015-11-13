@@ -9,7 +9,7 @@ organizationHomepage := Some(url("http://ij-plugins.sf.net"))
 startYear := Some(2013)
 licenses := Seq("GPLv3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.10.6"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 
@@ -27,19 +27,3 @@ publishTo <<= version {
     else
       Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
-
-pomExtra :=
-  <scm>
-    <url>git@github.com:jpsacha/sbt-imagej.git</url>
-    <connection>scm:git@github.com:jpsacha/sbt-imagej.git</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>jpsacha</id>
-      <name>Jarek Sacha</name>
-      <url>https://github.com/jpsacha</url>
-    </developer>
-  </developers>
-
-// Import default Sonatype publish settings.
-sonatypeSettings
