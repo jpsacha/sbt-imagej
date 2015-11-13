@@ -1,6 +1,6 @@
 name := "sbt-imagej-example"
 organization := "ij-plugins.sf.net"
-version := "2.0.0"
+version := "2.0.1-SNAPSHOT"
 
 scalaVersion := "2.11.4"
 
