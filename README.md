@@ -14,8 +14,9 @@ The main task is `ijRun` it packages the ImageJ plugin and helps test the plugin
    so you can interactively test your plugin from within ImageJ.
 
 The other task `ijPrepareRun` is intended for integration with IDEs, like IntelliJ IDEA and Eclipse.
+See also blog post [Developing ImageJ plugins with SBT using sbt-imagej](https://codingonthestaircase.wordpress.com/2014/11/23/developing-imagej-plugins-with-sbt-using-sbt-imagej/).
 
-`sbt-imagej` requires SBT 0.13.
+`sbt-imagej` requires SBT 0.13.5 or newer.
 
 Usage
 -----
@@ -23,7 +24,7 @@ Usage
 Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 
 ```scala
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.0-SNAPSHOT")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.0")
 ```
 
 To use `sbt-imagej` you need to enable it in your project configuration,
@@ -138,12 +139,11 @@ ijPrepareRun := ijPrepareRun.value ++ {
 
 ### Running SBT tasks at part of IDEA or Eclipse build ###
 
-[IntelliJ IDEA](https://www.jetbrains.com/idea/) has great [support](http://blog.jetbrains.com/scala/) for developing Scala code.
-One missing feature is ability to execute tasks as part of IDEA build.
-Though there is an easy workaround.
-IDEA can execute Ant tasks as part of the build, so simply add an Ant task that runs SBT task,
-in particular an `sbt-imagej` task. Use useful task to execute before a run in IDEA is ``.
-Here is an example Ant task that does it:
+[IntelliJ IDEA](https://www.jetbrains.com/idea/) can load SBT projects using its Scala plugin.
+To execute SBT tasks before run/debug you will additionally need SBT plugin.
+You can setup your run configuration as described in [example/README.md](example).
+
+Eclipse does noy currently support SBT tasks, but you can execute them indirectly be calling them from Ant.
 
 ```xml
 <target name="sbt-imagej-prepare-run"
@@ -164,8 +164,7 @@ Here is an example Ant task that does it:
 </target>
 ```
 
-You can find complete [build.xml](example/build.xml) in the [example] project.
-Similar approach also works in Eclipse.
+You can find complete [build.xml](example/build.xml) in the [example](example) project.
 
 
 License
