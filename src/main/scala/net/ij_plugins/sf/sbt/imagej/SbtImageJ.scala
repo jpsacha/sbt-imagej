@@ -28,30 +28,39 @@ object SbtImageJ extends sbt.AutoPlugin {
 
   object autoImport {
     /** Main tasks for setting up ImageJ runtime directory. */
-    lazy val ijRun = TaskKey[Unit]("ijRun",
+
+    lazy val ijRun: TaskKey[Unit] = TaskKey[Unit](
+      "ijRun",
       "Prepare plugins directory and run ImageJ")
 
-    lazy val ijPrepareRun = TaskKey[Seq[File]]("ijPrepareRun",
+    lazy val ijPrepareRun: TaskKey[Seq[File]] = TaskKey[Seq[File]](
+      "ijPrepareRun",
       "Prepare plugins directory to run with ImageJ")
 
-    lazy val ijCleanBeforePrepareRun = SettingKey[Boolean]("ijCleanBeforeRun",
+    lazy val ijCleanBeforePrepareRun: SettingKey[Boolean] = SettingKey[Boolean](
+      "ijCleanBeforeRun",
       "If `true` the plugins directory will be cleaned (deleted) before it is populated by `ijPrepareRun` task. " +
         "This is useful if jar names change during build, for instance, due to versioning.")
 
-    lazy val ijProjectDependencyJars = TaskKey[Seq[File]]("ijProjectDependencyJars",
+    lazy val ijProjectDependencyJars: TaskKey[Seq[File]] = TaskKey[Seq[File]](
+      "ijProjectDependencyJars",
       "Prepare plugins directory to run with ImageJ")
 
-    lazy val ijRuntimeSubDir = SettingKey[String]("ijRuntimeSubDir",
+    lazy val ijRuntimeSubDir: SettingKey[String] = SettingKey[String](
+      "ijRuntimeSubDir",
       "Location of ImageJ runtime directory relative to base directory.")
 
-    lazy val ijPluginsSubDir = SettingKey[String]("ijPluginsSubDir",
+    lazy val ijPluginsSubDir: SettingKey[String] = SettingKey[String](
+      "ijPluginsSubDir",
       "Subdirectory of the `plugins` directory, where all `jar`s will be copied, relative to `plugins` directory.")
 
-    lazy val ijPluginsDir = SettingKey[File]("ijPluginsDir",
+    lazy val ijPluginsDir: SettingKey[File] = SettingKey[File](
+      "ijPluginsDir",
       "Full path to `plugins` subdirectory, where all `jar`s will be copied. " +
         "By default, it is computed from `ijPluginsSubDir` and `ijRuntimeSubDir`.")
 
-    lazy val ijExclusions = SettingKey[Seq[String]]("ijExclusions",
+    lazy val ijExclusions: SettingKey[Seq[String]] = SettingKey[Seq[String]](
+      "ijExclusions",
       "List of regex expressions that match JARs that will be excluded from the plugins directory.")
   }
 
@@ -59,24 +68,51 @@ object SbtImageJ extends sbt.AutoPlugin {
   import net.ij_plugins.sf.sbt.imagej.SbtImageJ.autoImport._
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
-    ijRun <<= ((
-      runner in run,
-      baseDirectory in Runtime,
-      ijRuntimeSubDir,
-      fullClasspath in Runtime,
-      streams
-      ) map runTask).dependsOn(ijPrepareRun),
+    //    ijRun := ((
+    //      runner in run,
+    //      baseDirectory in Runtime,
+    //      ijRuntimeSubDir,
+    //      fullClasspath in Runtime,
+    //      streams
+    //    ) map runTask).dependsOn(ijPrepareRun).value,
+    ijRun := {
+      // ijPrepareRun should be executed first
+      ijPrepareRun.value
+      //
+      runTask(
+        (runner in run).value,
+        (baseDirectory in Runtime).value,
+        ijRuntimeSubDir.value,
+        (fullClasspath in Runtime).value,
+        streams.value
+      )
+    },
 
-    ijPrepareRun <<= ((
-      baseDirectory in Runtime,
-      ijCleanBeforePrepareRun,
-      ijRuntimeSubDir,
-      ijPluginsSubDir in Runtime,
-      ijExclusions in Runtime,
-      packageBin in Compile,
-      fullClasspath in Runtime,
-      streams
-      ) map prepareRunTask).dependsOn(packageBin in Compile),
+    //    ijPrepareRun := ((
+    //      baseDirectory in Runtime,
+    //      ijCleanBeforePrepareRun,
+    //      ijRuntimeSubDir,
+    //      ijPluginsSubDir in Runtime,
+    //      ijExclusions in Runtime,
+    //      packageBin in Compile,
+    //      fullClasspath in Runtime,
+    //      streams
+    //    ) map prepareRunTask).dependsOn(packageBin in Compile).value,
+    ijPrepareRun := {
+      // packageBin needs to be executed first
+      (packageBin in Compile).value
+      //
+      prepareRunTask(
+        (baseDirectory in Runtime).value,
+        ijCleanBeforePrepareRun.value,
+        ijRuntimeSubDir.value,
+        (ijPluginsSubDir in Runtime).value,
+        (ijExclusions in Runtime).value,
+        (packageBin in Compile).value,
+        (fullClasspath in Runtime).value,
+        streams.value
+      )
+    },
 
     ijCleanBeforePrepareRun := false,
 
@@ -88,19 +124,24 @@ object SbtImageJ extends sbt.AutoPlugin {
 
     ijExclusions := Seq(
       // ImageJ binaries
-      """ij-\d.\d\d[a-z]\.jar""", """ij\.jar""",
+      """ij-\d.\d\d[a-z]\.jar""",
+      """ij\.jar""",
       // Source archives
-      """\S*-src\.\S*""", """\S*-sources\.\S*""", """\S*_src_\S*""",
+      """\S*-src\.\S*""",
+      """\S*-sources\.\S*""",
+      """\S*_src_\S*""",
       // Javadoc
-      """\S*-javadoc\.\S*""", """\S*_javadoc_\S*""",
+      """\S*-javadoc\.\S*""",
+      """\S*_javadoc_\S*""",
       // Scaladoc
-      """\S*-scaladoc\.\S*""", """\S*_scaladoc_\S*"""
+      """\S*-scaladoc\.\S*""",
+      """\S*_scaladoc_\S*"""
     )
   )
 
   /**
-   * Run ImageJ; pointing it to created plugins.
-   */
+    * Run ImageJ; pointing it to created plugins.
+    */
   private def runTask(scalaRun: ScalaRun,
                       base: java.io.File,
                       runtimeDir: String,
@@ -113,8 +154,8 @@ object SbtImageJ extends sbt.AutoPlugin {
   }
 
   /**
-   * Copy dependencies to ImageJ plugins directory
-   */
+    * Copy dependencies to ImageJ plugins directory
+    */
   private def prepareRunTask(base: java.io.File,
                              cleanBeforeRun: Boolean,
                              runtimeDir: String,
@@ -123,16 +164,17 @@ object SbtImageJ extends sbt.AutoPlugin {
                              jar: java.io.File,
                              dependencies: Seq[Attributed[File]],
                              taskStreams: TaskStreams
-                              ): Seq[java.io.File] = {
+                            ): Seq[java.io.File] = {
     val logger = taskStreams.log
     val pluginsDir = base / runtimeDir / "plugins" / pluginsSubDir
     logger.debug("Preparing ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
-    if(pluginsDir.exists && cleanBeforeRun ) {
+    if (pluginsDir.exists && cleanBeforeRun) {
       logger.debug("Cleaning (deleting) ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
       IO.delete(pluginsDir)
     }
     pluginsDir.mkdirs()
     logger.debug("Copying to ImageJ plugin directory: " + pluginsDir.getCanonicalPath)
+    // TODO: [Issue #3] version number, if missing could be restored using Attributed[File] info
     val files = jar +: (for (f <- dependencies) yield f.data)
     for (f <- files
          if !f.isDirectory
