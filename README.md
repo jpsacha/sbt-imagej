@@ -24,7 +24,7 @@ Usage
 Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 
 ```scala
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.0")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.1")
 ```
 
 To use `sbt-imagej` you need to enable it in your project configuration,
@@ -170,6 +170,6 @@ You can find complete [build.xml](example/build.xml) in the [example](example) p
 License
 -------
 
-Copyright (c) 2013-2014 Jarek Sacha
+Copyright (c) 2013-2017 Jarek Sacha
 
 Published under GPLv3, see LICENSE file.
