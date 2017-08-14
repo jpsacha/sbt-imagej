@@ -1,0 +1,1 @@
+* Update code for compatibility with SBT 1.0.
