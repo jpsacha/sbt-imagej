@@ -3,7 +3,7 @@ sbtPlugin := true
 
 name          := "sbt-imagej"
 organization  := "net.sf.ij-plugins"
-version       := "2.0.1-SNAPSHOT"
+version       := "2.0.1"
 description   := "SBT plugin that helps create runtime directory structure for ImageJ plugin development."
 homepage      := Some(url("http://github.com/jpsacha/sbt-imagej"))
 organizationHomepage := Some(url("http://ij-plugins.sf.net"))
