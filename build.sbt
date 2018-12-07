@@ -10,7 +10,7 @@ organizationHomepage := Some(url("http://ij-plugins.sf.net"))
 startYear     := Some(2013)
 licenses      := Seq("GPLv3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
-scalaVersion  := "2.10.6"
+scalaVersion  := "2.12.8"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 
