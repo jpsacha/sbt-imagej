@@ -83,7 +83,7 @@ where all jars will be copied. `ijPluginsDir` is intended to be read-only. It ca
 for instance, in `cleanFiles += ijPluginsDir.value`. By default, it is computed from
 `ijPluginsSubDir` and `ijRuntimeSubDir`. You should not reassign it.
 
-### Multi-Module Projects###
+### Multi-Module Projects
 
 If you are using a multi-module projects and would like to include dependent project jars in the plugins directory
 you need to take extra steps. When a SBT creates a classpath from dependent projects it exports a directory containing its
@@ -170,6 +170,6 @@ You can find complete [build.xml](example/build.xml) in the [example](example) p
 License
 -------
 
-Copyright (c) 2013-2017 Jarek Sacha
+Copyright (c) 2013-2018 Jarek Sacha
 
 Published under GPLv3, see LICENSE file.
