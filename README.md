@@ -40,7 +40,6 @@ There is also a task that only copies the jar and dependencies to to the plugins
     > ijPrepareRun
 
 It is useful if you want to have your own run configuration, for instance executed by your IDE.
-Look in the `example` directory to see how it can be used in IntelliJ IDEA or Eclipse.
 
 ### Configuration
 
@@ -61,10 +60,8 @@ Consider example settings:
 
 ```scala
 ijRuntimeSubDir := "sandbox"
-
 ijPluginsSubDir := "my-plugin"
-
-ijExclusions += """some\.jar"""
+ijExclusions    += """some\.jar"""
 ```
 
 This will set ImageJ runtime directory to `sandbox` and directory where your plugins will be
@@ -97,8 +94,8 @@ You need to add `exportsJars := true` to every dependent projects in your build.
 Example Project
 ---------------
 
-You can find example project in sub-directory [example].
-It contains SBT setup, two ImageJ plugins, and a workaround to run SBT tasks from IDEA and Eclipse.
+You can find example project in sub-directory [example]. 
+It contains a simple project with with two ImageJ plugins.
 
 
 Tips and Tricks
@@ -132,35 +129,48 @@ ijPrepareRun := ijPrepareRun.value ++ {
 }
 ```
 
-### Running SBT tasks at part of IDEA or Eclipse build ###
+### Running using SBT
 
-[IntelliJ IDEA](https://www.jetbrains.com/idea/) can load SBT projects using its Scala plugin.
-To execute SBT tasks before run/debug you will additionally need SBT plugin.
-You can setup your run configuration as described in [example/README.md](example).
+1. Open command prompt
+2. Change directory to one containing this project
+3. Execute command `sbt ijRun`
 
-Eclipse does noy currently support SBT tasks, but you can execute them indirectly be calling them from Ant.
+### Running SBT tasks at part of IntelliJ IDEA build
 
-```xml
-<target name="sbt-imagej-prepare-run"
-        description="Run SBT task 'prepareRun' that prepares ImageJ plugins directory">
-    <property environment="env"/>
-    <fail unless="env.SBT_HOME"
-          message="SBT_HOME system variable must be defined and point to directory containing 'sbt-launch.jar'"/>
-    <property name="sbt-launch.jar" location="${env.SBT_HOME}/bin/sbt-launch.jar"/>
+[IntelliJ IDEA](https://www.jetbrains.com/idea/), with Scala plugin, can directly load SBT projects.
+You can then execute sbt tasks to build and copy needed jars to run your plugins in ImageJ.
 
-    <java dir="${basedir}"
-          jar="${sbt-launch.jar}"
-          fork="true"
-          failonerror="true">
-        <jvmarg line="-Dfile.encoding=UTF8 -Xmx1G -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m
-                      -Djava.net.useSystemProxies=true"/>
-        <arg line="ijPrepareRun"/>
-    </java>
-</target>
-```
+#### Option 1: Run `ijRun` task as "Run Configuration"
 
-You can find complete [build.xml](example/build.xml) in the [example](example) project.
+1. From the menu select "Run" > "Edit Configurations..."
+2. Click `+` (add new configuration) and select "sbt Task" as configuration type
+3. Give the configuration a name, say "ImageJ"
+4. Under "Tasks" type `ijRun`
+5. Make sure that working directory points to your module directory
 
+Now you have new run configuration that will build your code, package jars, and start ImageJ with your plugins.
+
+The downside of this method is that IntelliJ will not let you debug you code if you start it this way.
+
+#### Option 2: Add `ijPrepareRun` to a typical application run configuration
+
+The idea is to create a regular application run configuration and execute `sbt ijPrepareRun` to setup runtime directories:
+
+1. From the menu select "Run" > "Edit Configurations..."
+2. Click `+` (add new configuration) and select "Application" as configuration type
+3. Give you configuration a name, say "ImageJ"
+4. In "Main class:" type `ij.ImageJ`
+5. In "Working directory:" select subdirectory "sandbox" of your module directory (or a directory you defined in `ijRuntimeSubDir`)
+6. Select relevant project module.
+7. In "Before lunch:" select `+` and then select "Run External Tool"
+8. In "External Tool" window select `+` to define how to execute `sbt ijPrepareRun`
+9. Give the external toll configuration some name.
+10. In "Program:" type `sbt`
+11. In "Arguments:" type `ijPrepareRun`
+12. In "Working directory:" select your module directory
+13. Click "OK" a couple of times to close dialogs
+
+Now you have definition of an application run configuration that will run ImageJ, before the run SBT will be called to prepare plugin jars and copy them to plugins subdirectory.
 
 License
 -------
