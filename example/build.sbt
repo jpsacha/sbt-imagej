@@ -2,14 +2,13 @@ name := "sbt-imagej-example"
 organization := "ij-plugins.sf.net"
 version := "2.0.1"
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.8"
 
-libraryDependencies += "net.imagej" % "ij" % "1.51p"
+libraryDependencies += "net.imagej" % "ij" % "1.52i"
 
 fork := true
 
-// Enable and customize `sbt-imagej` plugin
-enablePlugins(SbtImageJ)
+// Customize `sbt-imagej` plugin
 ijRuntimeSubDir := "sandbox"
 ijPluginsSubDir := "ij-plugins"
 ijCleanBeforePrepareRun := true
