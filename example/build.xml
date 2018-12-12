@@ -24,9 +24,10 @@
 
 <project name="sbt-imagej-example" basedir=".">
 
-    <!-- This project is using SBT (https://github.com/harrah/xsbt) as a build system                               -->
-    <!-- This Ant scripts is only used to simplify integration of SBT into IDEs that do not yetproperly support it. -->
-    <!-- You need to define system variable SBT_HOME that points to directory containing 'sbt-launch.jar            -->
+    <!-- This project is using SBT (https://www.scala-sbt.org/) as a build system.                                   -->
+    <!-- This Ant scripts is only used to simplify integration of SBT into IDEs that do not yet properly support it. -->
+    <!-- For instance, to debug code in IntelliJ that was started from SBT task, like "ijRun".                       -->
+    <!-- You need to define system variable SBT_HOME that points to directory containing 'sbt-launch.jar             -->
 
     <target name="init">
         <property environment="env"/>
