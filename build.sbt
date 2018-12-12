@@ -1,4 +1,5 @@
 // @formatter:off
+
 sbtPlugin := true
 
 name          := "sbt-imagej"
@@ -14,17 +15,4 @@ scalaVersion  := "2.12.8"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 
-publishArtifact in(Test, packageBin) := false
-publishArtifact in(Test, packageDoc) := false
-publishArtifact in(Test, packageSrc) := false
-
 shellPrompt in ThisBuild := { state => "sbt:"+Project.extract(state).currentRef.project + "> " }
-
-publishTo := version {
-  version: String =>
-    val nexus = "https://oss.sonatype.org/"
-    if (version.contains("-SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}.value
