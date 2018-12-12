@@ -139,6 +139,9 @@ object SbtImageJ extends sbt.AutoPlugin {
     )
   )
 
+
+  override def trigger = allRequirements
+
   /**
     * Run ImageJ; pointing it to created plugins.
     */
@@ -147,6 +150,7 @@ object SbtImageJ extends sbt.AutoPlugin {
                       runtimeDir: String,
                       classpath: Classpath,
                       taskStreams: TaskStreams) {
+    // val logger = sbt.Keys.streams.value.log
     val logger = taskStreams.log
     val userDir = (base / runtimeDir).getCanonicalPath
     logger.debug("Run ImageJ with -ijpath " + userDir)
@@ -165,6 +169,7 @@ object SbtImageJ extends sbt.AutoPlugin {
                              dependencies: Seq[Attributed[File]],
                              taskStreams: TaskStreams
                             ): Seq[java.io.File] = {
+    // val logger = sbt.Keys.streams.value.log
     val logger = taskStreams.log
     val pluginsDir = base / runtimeDir / "plugins" / pluginsSubDir
     logger.debug("Preparing ImageJ plugin directory: " + pluginsDir.getCanonicalPath)

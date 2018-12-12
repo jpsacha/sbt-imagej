@@ -27,12 +27,7 @@ Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.1")
 ```
 
-To use `sbt-imagej` you need to enable it in your project configuration,
-if you're using `build.sbt` add this:
-
-```scala
-enablePlugins(SbtImageJ)
-```
+Once added to the project the plugin will be enabled by default.
 
 Now you'll have a new `ijRun` task which will compile your project,
 pack your class files and resources in a jar, copy that jar and dependencies to local

@@ -8,8 +8,7 @@ libraryDependencies += "net.imagej" % "ij" % "1.52i"
 
 fork := true
 
-// Enable and customize `sbt-imagej` plugin
-enablePlugins(SbtImageJ)
+// Customize `sbt-imagej` plugin
 ijRuntimeSubDir := "sandbox"
 ijPluginsSubDir := "ij-plugins"
 ijCleanBeforePrepareRun := true
