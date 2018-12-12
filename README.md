@@ -16,7 +16,7 @@ The main task is `ijRun` it packages the ImageJ plugin and helps test the plugin
 The other task `ijPrepareRun` is intended for integration with IDEs, like IntelliJ IDEA and Eclipse.
 See also blog post [Developing ImageJ plugins with SBT using sbt-imagej](https://codingonthestaircase.wordpress.com/2014/11/23/developing-imagej-plugins-with-sbt-using-sbt-imagej/).
 
-`sbt-imagej` requires SBT 0.13.5 or newer.
+`sbt-imagej` requires SBT 1.0 or newer.
 
 Usage
 -----
@@ -24,7 +24,7 @@ Usage
 Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
 
 ```scala
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.0.1")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.1.0")
 ```
 
 Once added to the project the plugin will be enabled by default.
