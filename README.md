@@ -21,9 +21,22 @@ See also blog post [Developing ImageJ plugins with SBT using sbt-imagej](https:/
 Usage
 -----
 
-Add `sbt-imagej` as a dependency in `project/imagej.sbt`:
+We assume here that you already have dependency on ImageJ in you project.
+For instance, in your `build.sbt` you should have:
 
-```scala
+```sbt
+libraryDependencies += "net.imagej" % "ij" % "1.53h"
+```
+
+It is also helpful enable SBT `run` to use forked JVM
+
+```sbt
+fork := true
+```
+
+To enable `sbt-imagej` add it as a dependency in `project/imagej.sbt`:
+
+```sbt
 addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.1.0")
 ```
 
