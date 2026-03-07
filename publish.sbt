@@ -1,16 +1,11 @@
-// @formatter:off
+import sbt.Keys.localStaging
 
 publishMavenStyle := true
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
-publishTo := version {
-  version: String =>
-    val nexus = "https://oss.sonatype.org/"
-    if (version.contains("-SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}.value
-
-pomIncludeRepository := { _ => false }
+ThisBuild / publishTo := {
+  val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
+  if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
+  else localStaging.value
+}

@@ -22,3 +22,4 @@ project/project
 .classpath
 .externalToolBuilders
 .project
+/.bsp/

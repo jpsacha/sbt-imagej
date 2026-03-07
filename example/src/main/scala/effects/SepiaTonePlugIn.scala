@@ -5,7 +5,7 @@ import ij.plugin.filter.PlugInFilter
 import ij.process.{ColorProcessor, ImageProcessor}
 
 /**
- * ImageJ plugin that add a sepia tone to a color image.
+  * ImageJ plugin that adds a sepia tone to a color image.
  */
 class SepiaTonePlugIn extends PlugInFilter {
 
@@ -14,9 +14,9 @@ class SepiaTonePlugIn extends PlugInFilter {
   private val sepiaB = 20d / 112
   private val weight = 0.9
 
-  def setup(arg: String, imp: ImagePlus) = PlugInFilter.DOES_RGB
+  def setup(arg: String, imp: ImagePlus): Int = PlugInFilter.DOES_RGB
 
-  def run(ip: ImageProcessor) {
+  def run(ip: ImageProcessor): Unit = {
 
     val cp = ip.asInstanceOf[ColorProcessor]
 
@@ -24,11 +24,11 @@ class SepiaTonePlugIn extends PlugInFilter {
     val channelR, channelG, channelB = new Array[Byte](n)
     cp.getRGB(channelR, channelG, channelB)
 
-    for (i <- 0 until n) {
+    for i <- 0 until n do {
       // Convert from unsigned Byte to Int
-      val r = channelR(i) & 0xFF
-      val g = channelG(i) & 0xFF
-      val b = channelB(i) & 0xFF
+      val r = channelR(i) & 0xff
+      val g = channelG(i) & 0xff
+      val b = channelB(i) & 0xff
       // Weighted intensity
       val l = 0.299 * r + 0.587 * g + 0.114 * b
 
@@ -41,9 +41,14 @@ class SepiaTonePlugIn extends PlugInFilter {
     cp.setRGB(channelR, channelG, channelB)
   }
 
-  /** Clamp input to unsigned Byte value. */
+  /** Clamp input to an unsigned Byte value. */
   private def clump(v: Double): Byte = {
     val i = math.round(v)
-    if (i < 0) 0.toByte else if (i > 255) 255.toByte else (i & 0xFF).toByte
+    if i < 0 then
+      0.toByte
+    else if i > 255 then
+      255.toByte
+    else
+      (i & 0xff).toByte
   }
 }
