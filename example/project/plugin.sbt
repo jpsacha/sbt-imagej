@@ -1,3 +1,3 @@
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+resolvers += Resolver.sonatypeCentralSnapshots
 
-addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.1.0")
+addSbtPlugin("net.sf.ij-plugins" % "sbt-imagej" % "2.2.0.1-SNAPSHOT")

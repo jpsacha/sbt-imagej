@@ -1,10 +1,20 @@
 name := "sbt-imagej-example"
 organization := "ij-plugins.sf.net"
-version := "2.1.1"
+version := "2.2.0"
 
-scalaVersion := "3.3.6"
+scalaVersion := "3.8.2"
 
 libraryDependencies += "net.imagej" % "ij" % "1.54p"
+
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-feature",
+  "-explain",
+  "-explain-types",
+  "-rewrite",
+  "-source:3.8-migration",
+)
 
 fork := true
 
